@@ -2,6 +2,9 @@ import styled from "@emotion/styled";
 import { useRef } from "react";
 import { FlexRow } from "../../core/Utility";
 import { Image } from "./image";
+import { ReactComponent as Chevron } from "../../../assets/icons/chevron-right.svg";
+import { ReactComponent as Check } from "../../../assets/icons/check-circle.svg";
+import { ReactComponent as Error } from "../../../assets/icons/exclamation-triangle.svg";
 
 const Triangle = styled.div({
   position: "absolute",
@@ -94,12 +97,14 @@ const ConnectingRectangle = styled.div(({ left = "69px", top = "53px", color = "
   transition: "height 0.2s ease-out",
 }));
 
-export const AccordionItem = ({ first, color, success, index, title, description, icon, expandable }) => {
+export const AccordionItem = ({ first, color, success, index, title, description, svgIcon, pngIcon, expandable }) => {
+  const SvgIcon = svgIcon;
   const contentRef = useRef();
   const connectingRectangle = useRef();
   const container = useRef();
   const dropDown = useRef();
   const toggleItem = () => {
+    if (!expandable) return;
     if (contentRef.current.style.maxHeight) {
       contentRef.current.style.border = null;
       contentRef.current.style.maxHeight = null;
@@ -111,33 +116,45 @@ export const AccordionItem = ({ first, color, success, index, title, description
       contentRef.current.style.maxHeight = contentRef.current.scrollHeight + "px";
       connectingRectangle.current.style.height = contentRef.current.scrollHeight + 77 + "px";
       container.current.style.height = contentRef.current.scrollHeight + 130 + "px";
-      dropDown.current.style.transform = "rotate(45deg)";
+      dropDown.current.style.transform = "rotate(90deg)";
     }
   };
+
+  const statusStyle = {
+    position: "absolute",
+    left: "0px",
+    top: "30px",
+    width: "20px",
+    height: "20px",
+
+  }
   return (
     <div ref={container} css={{ position: "relative", width: "500px", height: "94px", transition: "height 0.2s ease-out" }}>
-      <Circle color={color}>
+      {/* <Circle color={color}>
         <Image color={color}></Image>
-      </Circle>
+      </Circle> */}
+      {success ? <Check color={color} css={statusStyle}></Check> : <Error color={color} css={statusStyle}></Error>}
       <TriangleLeft color={color}></TriangleLeft>
       <Circle size="25px" left="57px" top="25px" color={color}>
-        01
+        {index}
       </Circle>
       {!first && <ConnectingRectangle color={color} style={{ top: "0px", height: "26px" }}></ConnectingRectangle>}
       <ConnectingRectangle ref={connectingRectangle} color={color}></ConnectingRectangle>
       <TriangleRight color={color}></TriangleRight>
       <SemiCircle color={color}>
         <InnerCircle>
-          <Image size="28px" color="gray"></Image>
+          {/* <Image size="28px" color="gray"></Image> */}
+          {pngIcon && <img src={pngIcon} width="28px" height="28px"></img>}
+          {svgIcon && <SvgIcon width="28px" height="28px" color="gray" />}
         </InnerCircle>
       </SemiCircle>
       <InnerRectangle color={color} onClick={toggleItem}>
-        <p css={{ fontSize: "16px", paddingLeft: "50px", height: "10px" }}>Opportunity Create</p>
-        <p css={{ fontSize: "12px", paddingLeft: "50px", color: "gray" }}>Opportunity Created in SFDC</p>
+        <p css={{ fontSize: "16px", paddingLeft: "50px", height: "10px" }}>{title}</p>
+        <p css={{ fontSize: "12px", paddingLeft: "50px", color: "gray" }}>{description}</p>
       </InnerRectangle>
       {expandable && (
         <Circle ref={dropDown} left="472px" color={color}>
-          <Image color={color}></Image>
+          <Chevron width="12px" height="12px"></Chevron>
         </Circle>
       )}
       <Content ref={contentRef}>
