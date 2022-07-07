@@ -1,0 +1,62 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "jest": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:import/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "@emotion"
+    ],
+    "rules": {
+        "react/react-in-jsx-scope": "off",
+        // "no-console": "error",
+        "no-debugger": "error",
+        "no-alert": "error",
+        "default-param-last": "warn",
+        "no-unused-vars": "warn",
+        "prettier/prettier": "warn",
+        "@emotion/pkg-renaming": "error",
+        "@emotion/no-vanilla": "warn",
+        "@emotion/styled-import": "warn",
+        "react/prop-types": "off"
+
+    },
+    // "settings": {
+    //     "import/resolver": {
+    //         "node": {
+    //           "paths": ["src"],
+    //           "extensions": [".js", ".jsx"]
+    //         }
+    //       }
+    // }
+    // "settings": {
+    //     "import/resolver": {
+    //         "webpack": {
+    //           "config": {
+    //               "resolve": {
+    //                   "extensions": [".js", ".jsx"]
+    //               }
+    //           }
+    //         }
+    //       }
+    // }
+    "settings": {
+        "import/resolver": "webpack"
+    }
+}
