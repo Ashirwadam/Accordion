@@ -1,9 +1,7 @@
 import styled from "@emotion/styled";
 import { useRef } from "react";
-import { FlexRow } from "../../core/Utility";
-import { Image } from "./image";
-import { ReactComponent as Chevron } from "../../../assets/icons/chevron-right.svg";
 import { ReactComponent as Check } from "../../../assets/icons/check-circle.svg";
+import { ReactComponent as Chevron } from "../../../assets/icons/chevron-right.svg";
 import { ReactComponent as Error } from "../../../assets/icons/exclamation-triangle.svg";
 
 const Triangle = styled.div({
@@ -97,7 +95,15 @@ const ConnectingRectangle = styled.div(({ left = "69px", top = "53px", color = "
   transition: "height 0.2s ease-out",
 }));
 
-export const AccordionItem = ({ first, color, success, index, title, description, svgIcon, pngIcon, expandable }) => {
+export const AccordionItem = ({ first, success, index, title, description, svgIcon, pngIcon, expandable, error, children }) => {
+  let color = null;
+  if (success) {
+    color = "green";
+  } else if (error) {
+    color = "orange";
+  } else {
+    color = "gray";
+  }
   const SvgIcon = svgIcon;
   const contentRef = useRef();
   const connectingRectangle = useRef();
@@ -126,24 +132,23 @@ export const AccordionItem = ({ first, color, success, index, title, description
     top: "30px",
     width: "20px",
     height: "20px",
-
-  }
+  };
   return (
     <div ref={container} css={{ position: "relative", width: "500px", height: "94px", transition: "height 0.2s ease-out" }}>
       {/* <Circle color={color}>
         <Image color={color}></Image>
       </Circle> */}
-      {success ? <Check color={color} css={statusStyle}></Check> : <Error color={color} css={statusStyle}></Error>}
-      <TriangleLeft color={color}></TriangleLeft>
+      {success && <Check color={color} css={statusStyle}></Check>}
+      {error && <Error color={color} css={statusStyle}></Error>}
+      {(success || error) && <TriangleLeft color={color}></TriangleLeft>}
       <Circle size="25px" left="57px" top="25px" color={color}>
         {index}
       </Circle>
       {!first && <ConnectingRectangle color={color} style={{ top: "0px", height: "26px" }}></ConnectingRectangle>}
       <ConnectingRectangle ref={connectingRectangle} color={color}></ConnectingRectangle>
       <TriangleRight color={color}></TriangleRight>
-      <SemiCircle color={color}>
+      <SemiCircle color={color} onClick={toggleItem}>
         <InnerCircle>
-          {/* <Image size="28px" color="gray"></Image> */}
           {pngIcon && <img src={pngIcon} width="28px" height="28px"></img>}
           {svgIcon && <SvgIcon width="28px" height="28px" color="gray" />}
         </InnerCircle>
@@ -153,18 +158,11 @@ export const AccordionItem = ({ first, color, success, index, title, description
         <p css={{ fontSize: "12px", paddingLeft: "50px", color: "gray" }}>{description}</p>
       </InnerRectangle>
       {expandable && (
-        <Circle ref={dropDown} left="472px" color={color}>
+        <Circle ref={dropDown} left="472px" color={color} onClick={toggleItem}>
           <Chevron width="12px" height="12px"></Chevron>
         </Circle>
       )}
-      <Content ref={contentRef}>
-        <p css={{ paddingTop: "10px" }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, exercitationem et! Doloremque est eveniet sint nisi enim in omnis
-          distinctio aliquam ullam velit placeat autem reiciendis provident, eaque quia ipsam. Lorem ipsum dolor sit amet, consectetur adipisicing
-          elit. Quam dignissimos quis a rem doloribus consequatur eos cupiditate quasi aperiam sunt vero explicabo, eum nostrum dolorum dicta quo
-          consectetur molestias recusandae.
-        </p>
-      </Content>
+      <Content ref={contentRef}>{children}</Content>
     </div>
   );
 };
