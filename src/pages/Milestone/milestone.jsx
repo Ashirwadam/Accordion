@@ -104,12 +104,12 @@ const Milestones = [
     expandable: false,
   },
 ];
-const Para = ({stage, children}) => {
+const Para = ({ stage, children }) => {
   const [color, setColor] = useState(Colors.gray);
   const [icon, setIcon] = useState("");
   useEffect(() => {
-    const check = <Check width="12px" height="12px" color={color}></Check>;
-    const error = <Error width="12px" height="12px" color={color}></Error>;
+    const check = <Check width="20px" height="20px" color={color}></Check>;
+    const error = <Error width="20px" height="20px" color={color}></Error>;
     if (stage == States.completed) {
       setColor(Colors.green);
       setIcon(check);
@@ -125,21 +125,27 @@ const Para = ({stage, children}) => {
     }
   }, []);
   return (
-    <p css={{ padding: "7px" }}>
+    // <div css={{ padding: "10px" }}>
+    //   {icon}
+    //   <div css={{ display: "inline" }}>
+    //     <span>{children}</span>
+    //   </div>
+    // </div>
+    <FlexRow padding="10px">
       {icon}
-      {children}
-    </p>
+      <span css={{ paddingLeft: "10px" }}>{children}</span>
+    </FlexRow>
   );
 };
 
 const MilestoneProcess1 = (props) => {
-  const {stage1, stage2, stage3, stage4} = props;
+  const { stage1, stage2, stage3, stage4 } = props;
   return (
     <>
-      <Para stage={stage1}>Opportunity Pulled into SL</Para>
-      <Para stage={stage2}>Business Partner Request Sent to MDG</Para>
-      <Para stage={stage3}>MDG Sent Business Partner to SL</Para>
-      <Para stage={stage4}>SL Updates Business Partner to SFDC</Para>
+      <Para stage={stage1}>Opportunity pulled into SL</Para>
+      <Para stage={stage2}>Business Partner Request sent to MDG</Para>
+      <Para stage={stage3}>MDG sent Business Partner to SL</Para>
+      <Para stage={stage4}>SL updates Business Partner to SFDC</Para>
     </>
   );
 };
@@ -168,8 +174,8 @@ export const Milestone = ({ accountId }) => {
                 key={index}
                 {...item}
                 index="3"
-                error={accordionData.stage5 == States.failed}
-                success={accordionData.stage5 == States.completed}
+                error={accordionData?.stage5 == States.failed}
+                success={accordionData?.stage5 == States.completed}
               >
                 <MilestoneProcess1 {...accordionData}></MilestoneProcess1>
               </AccordionItem>
