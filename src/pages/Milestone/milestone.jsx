@@ -138,6 +138,20 @@ const Para = ({ stage, children }) => {
   );
 };
 
+const Info = ({ info }) => {
+  return (
+    <div css={{ width: "400px", marginRight: "100px", border: "1px solid black", borderRadius: "5px", height: "900px" }}>
+      {Object.entries(info).map((item, index) => {
+        return (
+          <div key={index} css={{ borderBottom: "1px solid red", padding: "20px"}}>
+            {item[0]} {item[1]}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const MilestoneProcess1 = (props) => {
   const { stage1, stage2, stage3, stage4 } = props;
   return (
@@ -165,23 +179,26 @@ export const Milestone = ({ accountId }) => {
   }, []);
   return (
     <>
-      <Accordion>
-        {Milestones.map((item, index) => {
-          if (index !== 2) return <AccordionItem key={index} {...item} index={index + 1}></AccordionItem>;
-          else
-            return (
-              <AccordionItem
-                key={index}
-                {...item}
-                index="3"
-                error={accordionData?.stage5 == States.failed}
-                success={accordionData?.stage5 == States.completed}
-              >
-                <MilestoneProcess1 {...accordionData}></MilestoneProcess1>
-              </AccordionItem>
-            );
-        })}
-      </Accordion>
+      <FlexRow alignItems="flex-start">
+        <Info info={info}></Info>
+        <Accordion>
+          {Milestones.map((item, index) => {
+            if (index !== 2) return <AccordionItem key={index} {...item} index={index + 1}></AccordionItem>;
+            else
+              return (
+                <AccordionItem
+                  key={index}
+                  {...item}
+                  index="3"
+                  error={accordionData?.stage5 == States.failed}
+                  success={accordionData?.stage5 == States.completed}
+                >
+                  <MilestoneProcess1 {...accordionData}></MilestoneProcess1>
+                </AccordionItem>
+              );
+          })}
+        </Accordion>
+      </FlexRow>
     </>
   );
 };
