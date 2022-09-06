@@ -66,7 +66,7 @@ const milestones = [
     svgIcon: Icon,
   },
 ];
-const Para = ({ stage, children, ...rest }) => {
+const Para = ({ stage, children, anchor, ...rest }) => {
   const [color, setColor] = useState(Colors.gray);
   const [icon, setIcon] = useState("");
   useEffect(() => {
@@ -86,6 +86,16 @@ const Para = ({ stage, children, ...rest }) => {
       setIcon(check);
     }
   }, []);
+  let text = null;
+  if (anchor) {
+    text = (
+      <a href="javascript:void(0)" css={{ paddingLeft: "10px", color: "black" }}>
+        {children}
+      </a>
+    );
+  } else {
+    text = <span css={{ paddingLeft: "10px", color: "black" }}>{children}</span>;
+  }
   return (
     // <div css={{ padding: "10px" }}>
     //   {icon}
@@ -95,7 +105,7 @@ const Para = ({ stage, children, ...rest }) => {
     // </div>
     <FlexRow padding="10px" color={color} flexWrap="nowrap" {...rest}>
       <div>{icon}</div>
-      <span css={{ paddingLeft: "10px", color: "black" }}>{children}</span>
+      {text}
     </FlexRow>
   );
 };
@@ -141,18 +151,20 @@ const Contacts = ({ contacts }) => {
   );
 };
 
-const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, reRender }) => {
+const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, reRender: rerender }) => {
   const [contacts, setContacts] = useState();
   const handler = () => {
     setContacts(["ash", "happy", "ashir"]);
     console.log("Contacts set");
-    reRender();
-  }
+    rerender();
+  };
   return (
     <>
       <Para stage={stage1}>Create Contract Accounts & Associate Contracts</Para>
       <Para stage={stage2}>Create Address UUID for CA in MDG</Para>
-      <Para stage={stage3} onClick={handler}>Create Contracts in MDG </Para>
+      <Para stage={stage3} onClick={handler} anchor>
+        Create Contracts in MDG{" "}
+      </Para>
       {contacts && contacts.length > 0 && <Contacts contacts={contacts} />}
       <Para stage={stage4}>Update Address & Contacts in SFDC</Para>
       <Para stage={stage5}>Associate Contacts in MDG</Para>
@@ -160,16 +172,17 @@ const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, reR
     </>
   );
 };
-const mapColor = (state) => {
+const mapState = (data, state) => {
   switch (state) {
     case States.completed:
-      return Colors.green;
+      data.success = true;
+      break;
     case States.failed:
-      return Colors.orange;
+      data.error = true;
+      break;
     case States.progress:
-      return Colors.blue;
-    default:
-      return Colors.gray;
+      data.color = Colors.blue;
+      break;
   }
 };
 export const Milestone = ({ accountId }) => {
@@ -177,16 +190,16 @@ export const Milestone = ({ accountId }) => {
   const [milestoneData, setMilestoneData] = useState(milestones);
   const preprocessData = useCallback((data) => {
     const states = data.states;
-    const updatedData = { ...milestoneData };
+    const updatedData = [...milestones];
     const milestone1Data = {},
       milestone2Data = {};
     states.forEach((item) => {
       switch (item.state) {
         case "New":
           milestone1Data.stage1 = States.completed;
-          updatedData[0].color = mapColor(States.completed);
-          updatedData[1].color = mapColor(States.completed);
-          updatedData[2].color = mapColor(States.progress);
+          updatedData[0].state = States.completed;
+          updatedData[1].state = States.completed;
+          updatedData[2].state = States.progress;
           break;
         case "M1WaitingBp":
           milestone1Data.stage2 = States.progress;
@@ -196,7 +209,7 @@ export const Milestone = ({ accountId }) => {
           break;
         case "M1Failed":
           milestone1Data.stage3 = States.failed;
-          updatedData[2].color = mapColor(States.failed);
+          updatedData[2].state = States.failed;
           break;
         case "M1UpdateBPtoSFDC":
           milestone1Data.stage3 = States.completed;
@@ -204,16 +217,16 @@ export const Milestone = ({ accountId }) => {
           break;
         case "M1Completed":
           milestone1Data.stage4 = States.completed;
-          updatedData[2].color = mapColor(States.completed);
+          updatedData[2].state = States.completed;
           break;
         case "M2FailedCreateCAInSFDC":
           milestone2Data.stage1 = States.failed;
-          updatedData[5].color = mapColor(States.failed);
+          updatedData[5].state = States.failed;
           break;
         case "M2CreatedCAInSFDC":
-          updatedData[3].color = mapColor(States.completed);
-          updatedData[4].color = mapColor(States.completed);
-          updatedData[5].color = mapColor(States.progress);
+          updatedData[3].state = States.completed;
+          updatedData[4].state = States.completed;
+          updatedData[5].state = States.progress;
           milestone2Data.stage1 = States.completed;
           break;
         case "M2WaitingAddressIds":
@@ -233,9 +246,13 @@ export const Milestone = ({ accountId }) => {
           milestone2Data.stage4 = States.completed;
           break;
         case "M2Failed":
-          updatedData[5].color = mapColor(States.failed);
+          updatedData[5].state = States.failed;
           break;
       }
+    });
+    updatedData.forEach((item) => {
+      mapState(item, item.state);
+      delete item.state;
     });
     if (Object.keys(milestone1Data).length > 0) {
       updatedData[2].data = <MilestoneProcess1 {...milestone1Data}></MilestoneProcess1>;
@@ -263,7 +280,7 @@ export const Milestone = ({ accountId }) => {
       <FlexRow alignItems="flex-start">
         <Info info={info}></Info>
         <Accordion>
-          {milestones.map((item, index) => {
+          {milestoneData.map((item, index) => {
             return (
               <AccordionItem key={index} {...item} index={index + 1}>
                 {item.data}

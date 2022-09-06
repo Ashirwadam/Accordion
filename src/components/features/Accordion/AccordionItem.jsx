@@ -141,7 +141,7 @@ export const AccordionItem = ({ first, color, success, index, title, description
     width: "20px",
     height: "20px",
   };
-  const reRender = () => {
+  const rerender = () => {
     setRenderKey(generate());
     console.log("AccordionItem Rerendered");
   };
@@ -174,7 +174,7 @@ export const AccordionItem = ({ first, color, success, index, title, description
           <Chevron width="12px" height="12px"></Chevron>
         </Circle>
       )}
-      <Content ref={contentRef}>{children && cloneElement(children, { reRender: reRender })}</Content>
+      <Content ref={contentRef}>{children && cloneElement(children, { rerender: rerender })}</Content>
     </div>
   );
 };
