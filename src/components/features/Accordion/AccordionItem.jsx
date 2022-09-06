@@ -95,14 +95,15 @@ const ConnectingRectangle = styled.div(({ left = "69px", top = "53px", color = "
   transition: "height 0.2s ease-out",
 }));
 
-export const AccordionItem = ({ first, success, index, title, description, svgIcon, pngIcon, expandable, error, children }) => {
-  let color = null;
-  if (success) {
-    color = "green";
-  } else if (error) {
-    color = "orange";
-  } else {
-    color = "gray";
+export const AccordionItem = ({ first, color, success, index, title, description, svgIcon, pngIcon, expandable, error, children }) => {
+  if (!color) {
+    if (success) {
+      color = "green";
+    } else if (error) {
+      color = "orange";
+    } else {
+      color = "gray";
+    }
   }
   const SvgIcon = svgIcon;
   const contentRef = useRef();

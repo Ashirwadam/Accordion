@@ -5,7 +5,7 @@ export const HelloWorld = () => {
   return (
     <>
       <FlexRow justifyContent="center">
-        <div css={{ width: "1300px", height: "900px", marginTop: "50px", paddingTop: "50px", backgroundColor: "yellow"}}>
+        <div css={{ width: "1300px", height: "900px", marginTop: "50px", paddingTop: "50px"}}>
           <Milestone />
         </div>
       </FlexRow>
