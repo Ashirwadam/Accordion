@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { useRef } from "react";
+import { useState, useEffect, cloneElement, useRef } from "react";
+import shortid, {generate} from "shortid";
 import { ReactComponent as Check } from "../../../assets/icons/check-circle.svg";
 import { ReactComponent as Chevron } from "../../../assets/icons/chevron-right.svg";
 import { ReactComponent as Error } from "../../../assets/icons/exclamation-triangle.svg";
@@ -96,6 +97,8 @@ const ConnectingRectangle = styled.div(({ left = "69px", top = "53px", color = "
 }));
 
 export const AccordionItem = ({ first, color, success, index, title, description, svgIcon, pngIcon, expandable, error, children }) => {
+  const [expanded, setExpanded] = useState(false);
+  const [renderKey, setRenderKey] = useState(generate());
   if (!color) {
     if (success) {
       color = "green";
@@ -110,21 +113,25 @@ export const AccordionItem = ({ first, color, success, index, title, description
   const connectingRectangle = useRef();
   const container = useRef();
   const dropDown = useRef();
-  const toggleItem = () => {
-    if (!expandable) return;
-    if (contentRef.current.style.maxHeight) {
-      contentRef.current.style.border = null;
-      contentRef.current.style.maxHeight = null;
-      connectingRectangle.current.style.height = "41px";
-      dropDown.current.style.transform = "rotate(0deg)";
-      container.current.style.height = "94px";
-    } else {
-      contentRef.current.style.border = "1px solid #cfcfcf";
-      contentRef.current.style.maxHeight = contentRef.current.scrollHeight + "px";
-      connectingRectangle.current.style.height = contentRef.current.scrollHeight + 77 + "px";
-      container.current.style.height = contentRef.current.scrollHeight + 130 + "px";
-      dropDown.current.style.transform = "rotate(90deg)";
+  useEffect(() => {
+    if (expandable) {
+      if (!expanded) {
+        contentRef.current.style.border = null;
+        contentRef.current.style.maxHeight = null;
+        connectingRectangle.current.style.height = "41px";
+        dropDown.current.style.transform = "rotate(0deg)";
+        container.current.style.height = "94px";
+      } else {
+        contentRef.current.style.border = "1px solid #cfcfcf";
+        contentRef.current.style.maxHeight = contentRef.current.scrollHeight + "px";
+        connectingRectangle.current.style.height = contentRef.current.scrollHeight + 77 + "px";
+        container.current.style.height = contentRef.current.scrollHeight + 130 + "px";
+        dropDown.current.style.transform = "rotate(90deg)";
+      }
     }
+  }, [expanded, renderKey]);
+  const toggleItem = () => {
+    setExpanded(!expanded);
   };
 
   const statusStyle = {
@@ -133,6 +140,10 @@ export const AccordionItem = ({ first, color, success, index, title, description
     top: "30px",
     width: "20px",
     height: "20px",
+  };
+  const reRender = () => {
+    setRenderKey(generate());
+    console.log("AccordionItem Rerendered");
   };
   return (
     <div ref={container} css={{ position: "relative", width: "500px", height: "94px", transition: "height 0.2s ease-out" }}>
@@ -163,7 +174,7 @@ export const AccordionItem = ({ first, color, success, index, title, description
           <Chevron width="12px" height="12px"></Chevron>
         </Circle>
       )}
-      <Content ref={contentRef}>{children}</Content>
+      <Content ref={contentRef}>{children && cloneElement(children, { reRender: reRender })}</Content>
     </div>
   );
 };

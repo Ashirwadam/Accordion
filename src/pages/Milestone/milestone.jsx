@@ -66,7 +66,7 @@ const milestones = [
     svgIcon: Icon,
   },
 ];
-const Para = ({ stage, children }) => {
+const Para = ({ stage, children, ...rest }) => {
   const [color, setColor] = useState(Colors.gray);
   const [icon, setIcon] = useState("");
   useEffect(() => {
@@ -93,7 +93,7 @@ const Para = ({ stage, children }) => {
     //     <span>{children}</span>
     //   </div>
     // </div>
-    <FlexRow padding="10px" color={color} flexWrap="nowrap">
+    <FlexRow padding="10px" color={color} flexWrap="nowrap" {...rest}>
       <div>{icon}</div>
       <span css={{ paddingLeft: "10px", color: "black" }}>{children}</span>
     </FlexRow>
@@ -129,10 +129,10 @@ const MilestoneProcess1 = (props) => {
 const Contacts = ({ contacts }) => {
   return (
     <>
-      {contacts.forEach((item) => {
+      {contacts.map((item, index) => {
         return (
-          <FlexRow padding="30px">
-            <Person width="10px" height="10px" />
+          <FlexRow key={index} padding="0 0 5px 50px">
+            <Person width="15px" height="15px" />
             <span css={{ paddingLeft: "10px" }}>{item}</span>
           </FlexRow>
         );
@@ -141,12 +141,18 @@ const Contacts = ({ contacts }) => {
   );
 };
 
-const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, contacts }) => {
+const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, reRender }) => {
+  const [contacts, setContacts] = useState();
+  const handler = () => {
+    setContacts(["ash", "happy", "ashir"]);
+    console.log("Contacts set");
+    reRender();
+  }
   return (
     <>
       <Para stage={stage1}>Create Contract Accounts & Associate Contracts</Para>
       <Para stage={stage2}>Create Address UUID for CA in MDG</Para>
-      <Para stage={stage3}>Create Contracts in MDG</Para>
+      <Para stage={stage3} onClick={handler}>Create Contracts in MDG </Para>
       {contacts && contacts.length > 0 && <Contacts contacts={contacts} />}
       <Para stage={stage4}>Update Address & Contacts in SFDC</Para>
       <Para stage={stage5}>Associate Contacts in MDG</Para>
