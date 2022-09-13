@@ -56,8 +56,8 @@ const milestones = [
     svgIcon: Icon,
   },
   {
-    title: "Create Account",
-    description: "Account Created in Reveal",
+    title: "Milestone Process 2",
+    description: "",
     svgIcon: Icon,
   },
   {
@@ -160,13 +160,13 @@ const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, reR
   };
   return (
     <>
-      <Para stage={stage1}>Create Contract Accounts & Associate Contracts</Para>
-      <Para stage={stage2}>Create Address UUID for CA in MDG</Para>
+      <Para stage={stage1}>Create Contract Accounts in Salesforce</Para>
+      <Para stage={stage2}>Create Contract Addresses in MDG</Para>
       <Para stage={stage3} onClick={handler} anchor>
-        Create Contracts in MDG{" "}
+        Create Contacts in MDG{" "}
       </Para>
       {contacts && contacts.length > 0 && <Contacts contacts={contacts} />}
-      <Para stage={stage4}>Update Address & Contacts in SFDC</Para>
+      <Para stage={stage4}>Update Address Ids & Contract Ids in Salesforce</Para>
       <Para stage={stage5}>Associate Contacts in MDG</Para>
       <Para stage={stage6}>Create Contract Account in MDG</Para>
     </>
@@ -228,15 +228,18 @@ export const Milestone = ({ accountId }) => {
           updatedData[4].state = States.completed;
           updatedData[5].state = States.progress;
           milestone2Data.stage1 = States.completed;
+          milestone2Data.stage2 = States.progress;
+          milestone2Data.stage3 = States.progress;
           break;
         case "M2WaitingAddressIds":
           milestone2Data.stage2 = States.progress;
           break;
         case "M2WaitingContactIBP":
-          milestone2Data.stage2 = States.completed;
+          milestone2Data.stage3 = States.progress;
           break;
         case "M2GotAddressIds":
-          milestone2Data.stage3 = States.progress;
+          milestone2Data.stage2 = States.completed;
+          milestone2Data.stage4 = States.progress;
           break;
         case "M2GotBP":
           milestone2Data.stage3 = States.completed;
@@ -247,6 +250,8 @@ export const Milestone = ({ accountId }) => {
           break;
         case "M2Failed":
           updatedData[5].state = States.failed;
+          milestone2Data.stage2 = States.failed;
+          milestone2Data.stage3 = States.failed;
           break;
       }
     });

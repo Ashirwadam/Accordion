@@ -22,27 +22,30 @@ export async function getMilestoneData(accountID) {
           {
             state: "M1Completed",
           },
+          // {
+          //   state: "M2FailedCreateCAInSFDC",
+          // },
           {
-            state: "M2FailedCreateCAInSFDC",
+            state: "M2CreatedCAInSFDC",
           },
-          // {
-          //   state: "M2CreatedCAInSFDC",
-          // },
-          // {
-          //   state: "M2WaitingAddressIds",
-          // },
-          // {
-          //   state: "M2WaitingContactIBP",
-          // },
-          // {
-          //   state: "M2GotBP",
-          // },
-          // {
-          //   state: "M2UpdatedAddressIdsInSFDC",
-          // },
-          // {
-          //   state: "M2Failed",
-          // },
+          {
+            state: "M2WaitingAddressIds",
+          },
+          {
+            state: "M2WaitingContactIBP",
+          },
+          {
+            state: "M2GotBP",
+          },
+          {
+            state: "M2GotAddressIds",
+          },
+          {
+            state: "M2UpdatedAddressIdsInSFDC",
+          },
+          {
+            state: "M2Failed",
+          },
 
         ],
       },
