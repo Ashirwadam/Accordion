@@ -8,10 +8,10 @@ export async function getMilestoneData(accountID) {
             state: "New",
           },
           {
-            state: "M1WaitingBp",
+            state: "M1WaitingBP",
           },
           {
-            state: "M1GotBp",
+            state: "M1GotBP",
           },
           // {
           //   state: "M1Failed",
@@ -32,7 +32,7 @@ export async function getMilestoneData(accountID) {
             state: "M2WaitingAddressIds",
           },
           {
-            state: "M2WaitingContactIBP",
+            state: "M2WaitingContactBP",
           },
           {
             state: "M2GotBP",
@@ -41,11 +41,26 @@ export async function getMilestoneData(accountID) {
             state: "M2GotAddressIds",
           },
           {
-            state: "M2UpdatedAddressIdsInSFDC",
+            state: "M2ContactBPUpdatedInSFDC",
           },
           {
-            state: "M2Failed",
+            state: "M2CAAddressIdUpdated",
           },
+          {
+            state: "M2ContactWaitingAssociation",
+          },
+          {
+            state: "M2ContactAssociated",
+          },
+          {
+            state: "M2WaitingCACreateInMDG",
+          },
+          {
+            state: "M2GotCA",
+          },
+          // {
+          //   state: "M2Failed",
+          // },
 
         ],
       },

@@ -151,7 +151,7 @@ const Contacts = ({ contacts }) => {
   );
 };
 
-const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, reRender: rerender }) => {
+const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, rerender }) => {
   const [contacts, setContacts] = useState();
   const handler = () => {
     setContacts(["ash", "happy", "ashir"]);
@@ -188,6 +188,15 @@ const mapState = (data, state) => {
 export const Milestone = ({ accountId }) => {
   const [info, setInfo] = useState(makeInfo(null));
   const [milestoneData, setMilestoneData] = useState(milestones);
+  const markMilestone1Complete = useCallback((accordionData, milestone1Data) => {
+    milestone1Data.stage1 = States.completed;
+    milestone1Data.stage2 = States.completed;
+    milestone1Data.stage3 = States.completed;
+    milestone1Data.stage4 = States.completed;
+    accordionData[0].state = States.completed;
+    accordionData[1].state = States.completed;
+    accordionData[2].state = States.completed;
+  }, []);
   const preprocessData = useCallback((data) => {
     const states = data.states;
     const updatedData = [...milestones];
@@ -197,24 +206,27 @@ export const Milestone = ({ accountId }) => {
       switch (item.state) {
         case "New":
           milestone1Data.stage1 = States.completed;
+          milestone1Data.stage2 = States.progress;
           updatedData[0].state = States.completed;
           updatedData[1].state = States.completed;
           updatedData[2].state = States.progress;
           break;
-        case "M1WaitingBp":
-          milestone1Data.stage2 = States.progress;
-          break;
-        case "M1GotBp":
+        case "M1WaitingBP":
           milestone1Data.stage2 = States.completed;
+          milestone1Data.stage3 = States.progress;
+          break;
+        case "M1GotBP":
+          milestone1Data.stage3 = States.completed;
+          milestone1Data.stage4 = States.progress;
           break;
         case "M1Failed":
           milestone1Data.stage3 = States.failed;
           updatedData[2].state = States.failed;
           break;
         case "M1UpdateBPtoSFDC":
-          milestone1Data.stage3 = States.completed;
-          milestone1Data.stage4 = States.progress;
+          milestone1Data.stage4 = States.completed;
           break;
+        case "M1BpPresent":
         case "M1Completed":
           milestone1Data.stage4 = States.completed;
           updatedData[2].state = States.completed;
@@ -224,6 +236,7 @@ export const Milestone = ({ accountId }) => {
           updatedData[5].state = States.failed;
           break;
         case "M2CreatedCAInSFDC":
+          markMilestone1Complete(updatedData, milestone1Data);
           updatedData[3].state = States.completed;
           updatedData[4].state = States.completed;
           updatedData[5].state = States.progress;
@@ -232,21 +245,47 @@ export const Milestone = ({ accountId }) => {
           milestone2Data.stage3 = States.progress;
           break;
         case "M2WaitingAddressIds":
+          markMilestone1Complete(updatedData, milestone1Data);
+          updatedData[3].state = States.completed;
+          updatedData[4].state = States.completed;
+          updatedData[5].state = States.progress;
+          milestone2Data.stage1 = States.completed;
           milestone2Data.stage2 = States.progress;
           break;
-        case "M2WaitingContactIBP":
+        case "M2WaitingContactBP":
+          milestone2Data.stage1 = States.completed;
           milestone2Data.stage3 = States.progress;
           break;
         case "M2GotAddressIds":
           milestone2Data.stage2 = States.completed;
           milestone2Data.stage4 = States.progress;
+          milestone2Data.stage5 = States.progress;
           break;
         case "M2GotBP":
           milestone2Data.stage3 = States.completed;
           milestone2Data.stage4 = States.progress;
+          milestone2Data.stage5 = States.progress;
           break;
-        case "M2UpdatedAddressIdsInSFDC":
+        case "M2ContactBPUpdatedInSFDC":
           milestone2Data.stage4 = States.completed;
+          break;
+        case "UpdatedCAinSFDC":
+        case "M2CAAddressIdUpdated":
+          milestone2Data.stage5 = States.completed;
+          break;
+        case "M2WaitingAssociation":
+        case "M2ContactWaitingAssociation":
+          milestone2Data.stage6 = States.progress;
+          break;
+        case "M2ContactAssociated":
+          milestone2Data.stage6 = States.completed;
+          break;
+        case "M2WaitingCACreateInMDG":
+          milestone2Data.stage7 = States.progress;
+          break;
+        case "M2GotCA":
+          milestone2Data.stage7 = States.completed;
+          updatedData[5].state = States.completed;
           break;
         case "M2Failed":
           updatedData[5].state = States.failed;
