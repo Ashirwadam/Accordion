@@ -151,7 +151,7 @@ const Contacts = ({ contacts }) => {
   );
 };
 
-const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, rerender }) => {
+const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, stage7, stage8, rerender }) => {
   const [contacts, setContacts] = useState();
   const handler = () => {
     setContacts(["ash", "happy", "ashir"]);
@@ -160,15 +160,17 @@ const MilestoneProcess2 = ({ stage1, stage2, stage3, stage4, stage5, stage6, rer
   };
   return (
     <>
-      <Para stage={stage1}>Create Contract Accounts in Salesforce</Para>
-      <Para stage={stage2}>Create Contract Addresses in MDG</Para>
+      <Para stage={stage1}>Create contract account and associate contacts</Para>
+      <Para stage={stage2}>Create Address UUID for CA in MDG</Para>
       <Para stage={stage3} onClick={handler} anchor>
-        Create Contacts in MDG{" "}
+        Create Contracts in MDG{" "}
       </Para>
       {contacts && contacts.length > 0 && <Contacts contacts={contacts} />}
-      <Para stage={stage4}>Update Address Ids & Contract Ids in Salesforce</Para>
-      <Para stage={stage5}>Associate Contacts in MDG</Para>
-      <Para stage={stage6}>Create Contract Account in MDG</Para>
+      <Para stage={stage4}>Update Contact in SFDC</Para>
+      <Para stage={stage5}>Associate Contact in MDG</Para>
+      <Para stage={stage6}>Update Address Ids in SFDC</Para>
+      <Para stage={stage7}>Create CA in MDG</Para>
+      <Para stage={stage8}>Update CA in SFDC</Para>
     </>
   );
 };
@@ -196,6 +198,20 @@ export const Milestone = ({ accountId }) => {
     accordionData[0].state = States.completed;
     accordionData[1].state = States.completed;
     accordionData[2].state = States.completed;
+  }, []);
+  const markMilestone2Complete = useCallback((accordionData, milestone2Data) => {
+    milestone2Data.stage1 = States.completed;
+    milestone2Data.stage2 = States.completed;
+    milestone2Data.stage3 = States.completed;
+    milestone2Data.stage4 = States.completed;
+    milestone2Data.stage5 = States.completed;
+    milestone2Data.stage6 = States.completed;
+    milestone2Data.stage7 = States.completed;
+    milestone2Data.stage8 = States.completed;
+    accordionData[3].state = States.completed;
+    accordionData[4].state = States.completed;
+    accordionData[5].state = States.completed;
+
   }, []);
   const preprocessData = useCallback((data) => {
     const states = data.states;
@@ -268,29 +284,40 @@ export const Milestone = ({ accountId }) => {
           break;
         case "M2ContactBPUpdatedInSFDC":
           milestone2Data.stage4 = States.completed;
+          milestone2Data.stage5 = States.progress;
           break;
         case "UpdatedCAinSFDC":
         case "M2CAAddressIdUpdated":
-          milestone2Data.stage5 = States.completed;
+          milestone2Data.stage6 = States.completed;
           break;
         case "M2WaitingAssociation":
         case "M2ContactWaitingAssociation":
-          milestone2Data.stage6 = States.progress;
+          milestone2Data.stage5 = States.progress;
           break;
         case "M2ContactAssociated":
-          milestone2Data.stage6 = States.completed;
+          milestone2Data.stage5 = States.completed;
+          milestone2Data.stage6 = States.progress;
           break;
         case "M2WaitingCACreateInMDG":
           milestone2Data.stage7 = States.progress;
           break;
         case "M2GotCA":
           milestone2Data.stage7 = States.completed;
-          updatedData[5].state = States.completed;
+          milestone2Data.stage8 = States.progress;
           break;
+        case "M2UpdatedCAInSFDC":
+          milestone2Data.stage8 = States.completed;
+          break;
+        case "M2Completed":
+          markMilestone2Complete(updatedData, milestone2Data);
+        break;
         case "M2Failed":
           updatedData[5].state = States.failed;
-          milestone2Data.stage2 = States.failed;
-          milestone2Data.stage3 = States.failed;
+          for (const key in milestone2Data) {
+            if (milestone2Data[key] === States.progress) {
+              milestone2Data[key] = States.failed;
+            }
+          }
           break;
       }
     });

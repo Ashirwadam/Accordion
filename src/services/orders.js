@@ -58,9 +58,9 @@ export async function getMilestoneData(accountID) {
           {
             state: "M2GotCA",
           },
-          // {
-          //   state: "M2Failed",
-          // },
+          {
+            state: "M2Failed",
+          },
 
         ],
       },
