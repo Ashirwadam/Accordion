@@ -311,6 +311,9 @@ export const Milestone = ({ accountId }) => {
         case "M2Completed":
           markMilestone2Complete(updatedData, milestone2Data);
         break;
+        case "OCCompleted":
+           updatedData[6].state = States.completed;
+        break;
         case "M2Failed":
           updatedData[5].state = States.failed;
           for (const key in milestone2Data) {
