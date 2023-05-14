@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 import { ReactComponent as ProgressIcon } from "../../../assets/icons/calendar.svg";
 import { ReactComponent as SuccessIcon } from "../../../assets/icons/check.svg";
 import { ReactComponent as FailedIcon } from "../../../assets/icons/exclamation-triangle.svg";
 import { ReactComponent as TriangleUp } from "../../../assets/icons/triangle-up.svg";
-import { FlexColumn, FlexRow } from "../../core/Utility";
+import { FlexRow } from "../../core/Utility";
 
 const Status = {
   SUCCESS: "SUCCESS",
@@ -31,14 +32,14 @@ export const ProgressFlow = ({ data }) => {
   return (
     <FlexRow width="100%" alignItems="center">
       {data.map((item, index) => {
-        const { title, status, HoverComponent } = item;
+        const { title, status, HoverComponent, id, openOnClick = false } = item;
         if (index === 0) {
-          return <ProgressComponent key={title} {...{ title, status, HoverComponent }} />;
+          return <ProgressComponent key={title} {...{ title, status, HoverComponent, id, openOnClick }} />;
         } else {
           return (
             <>
               <FlexRow key={`${title}-dash`} css={{ backgroundColor: mapColor(status), height: "7px", flexGrow: 1, margin: "0 10px" }}></FlexRow>
-              <ProgressComponent key={title} {...{ title, status, HoverComponent }} />
+              <ProgressComponent key={title} {...{ title, status, HoverComponent, id, openOnClick }} />
             </>
           );
         }
@@ -64,9 +65,8 @@ const mapIcon = (status) => {
   }
 };
 
-const ProgressComponent = ({ title, status, HoverComponent }) => {
+const ProgressComponent = ({ title, status, HoverComponent, id, openOnClick }) => {
   const Icon = mapIcon(status);
-  const [popup, showPopup] = useState(false);
 
   return (
     <div>
@@ -80,24 +80,28 @@ const ProgressComponent = ({ title, status, HoverComponent }) => {
           borderRadius: "30px",
           backgroundColor: mapColor(status),
         }}
-        onMouseEnter={(event) => {
-          showPopup(true);
-        }}
-        onMouseLeave={() => {
-          showPopup(false);
-        }}
+        data-tooltip-id={id}
       >
         <Icon color="white" />
         <p css={{ pointerEvents: "none", position: "absolute", top: "45px", textAlign: "center" }}>{title}</p>
-        {popup && (
-          <FlexColumn
-            css={{
+        {HoverComponent && (
+          <Tooltip
+            id={id}
+            place="bottom"
+            offset={200}
+            noArrow
+            style={{
+              padding: 0,
+              borderRadius: "20px",
               justifyContent: "center",
               alignItems: "center",
-              position: "absolute",
-              top: "90px",
+              display: "flex",
               filter: "drop-shadow(10px 5px 10px gray)",
+              flexDirection: "column",
+              backgroundColor: "transparent",
             }}
+            openOnClick={openOnClick}
+            clickable
           >
             <TriangleUp width="50px" height="50px" color="white" />
             <div
@@ -113,7 +117,7 @@ const ProgressComponent = ({ title, status, HoverComponent }) => {
             >
               {HoverComponent}
             </div>
-          </FlexColumn>
+          </Tooltip>
         )}
       </FlexRow>
     </div>
